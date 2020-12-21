@@ -5,23 +5,39 @@ using namespace std;
 char board[3][3]{{' ', ' ', ' '}, {' ', ' ', ' '}, {' ', ' ', ' '}};
 void player1st_move();
 void player2nd_move();
-void check_win();
+int check_win();
 int check_row();
 int check_col();
 int check_diagonal();
 void draw_board();
-void start()
-{
-  player1st_move();
-  player2nd_move();
-  check_win();
-}
+void start();
 
 int main()
 {
   start();
-  draw_board();
   return 0;
+}
+
+void start()
+{
+  int result{0};
+  while (result != 1 || result != 2)
+  {
+    if (result == 1)
+    {
+      cout << "Player 1 has won" << endl;
+      return;
+    }
+    else if (result == 2)
+    {
+      cout << "Player 2 has won" << endl;
+      return;
+    }
+    player1st_move();
+    result = check_win();
+    player2nd_move();
+    result = check_win();
+  }
 }
 
 void player1st_move()
@@ -31,13 +47,14 @@ void player1st_move()
   cout << "1st Player enters your move: ";
   cin >> x >> y;
   cout << endl;
-  if (board[x - 1][y - 1] == 'O')
+  if (board[x - 1][y - 1] == ' ')
   {
-    cout << "1st Player: ";
-    cin >> x >> y;
-    cout << endl;
+    board[x - 1][y - 1] = 'X';
   }
-  board[x - 1][y - 1] = 'X';
+  else
+  {
+    player1st_move();
+  }
   draw_board();
 }
 
@@ -48,58 +65,47 @@ void player2nd_move()
   cout << "2nd Player enters your move: ";
   cin >> x >> y;
   cout << endl;
-  if (board[x - 1][y - 1] == 'X')
-  {
-    cout << "2nd Player enters your move: ";
-    cin >> x >> y;
-    cout << endl;
-  }
-  else if (board[x - 1][y - 1] != 'X')
+  if (board[x - 1][y - 1] == ' ')
   {
     board[x - 1][y - 1] = 'O';
+  }
+  else
+  {
+    player2nd_move();
   }
   draw_board();
 }
 
-void check_win()
+int check_win()
 {
   int result{check_row()};
   if (result == 1)
   {
-    cout << "Player 1 has won" << endl;
+    return 1;
   }
   else if (result == 2)
   {
-    cout << "Player 2 has won" << endl;
+    return 2;
   }
-  else
+  int result_diagonal{check_diagonal()};
+  if (result_diagonal == 1)
   {
-    int result_diagonal{check_diagonal()};
-    if (result_diagonal == 1)
-    {
-      cout << "Player 1 has won" << endl;
-    }
-    else if (result_diagonal == 2)
-    {
-      cout << "Player 2 has won" << endl;
-    }
-    else
-    {
-      int result_col{check_col()};
-      if (result_col == 1)
-      {
-        cout << "Player 1 has won" << endl;
-      }
-      else if (result_col == 2)
-      {
-        cout << "Player 2 has won" << endl;
-      }
-      else
-      {
-        start();
-      }
-    }
+    return 1;
   }
+  else if (result_diagonal == 2)
+  {
+    return 2;
+  }
+  int result_col{check_col()};
+  if (result_col == 1)
+  {
+    return 1;
+  }
+  else if (result_col == 2)
+  {
+    return 2;
+  }
+  return 3;
 }
 
 int check_row()
