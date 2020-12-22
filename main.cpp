@@ -1,10 +1,12 @@
 #include <iostream>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 
-char board[3][3]{{' ', ' ', ' '}, {' ', ' ', ' '}, {' ', ' ', ' '}};
-void player1st_move();
-void player2nd_move();
+char board[3][3]{{'1', '2', '3'}, {'4', '5', '6'}, {'7', '8', '9'}};
+void player1st_move(vector<int> &moves);
+void player2nd_move(vector<int> &moves);
 int check_win();
 int check_row();
 int check_col();
@@ -20,6 +22,7 @@ int main()
 
 void start()
 {
+  vector<int> moves;
   int result{0};
   while (result != 1 || result != 2)
   {
@@ -33,46 +36,48 @@ void start()
       cout << "Player 2 has won" << endl;
       return;
     }
-    player1st_move();
+    player1st_move(moves);
     result = check_win();
-    player2nd_move();
+    player2nd_move(moves);
     result = check_win();
   }
 }
 
-void player1st_move()
+void player1st_move(vector<int> &moves)
 {
   int x{0};
-  int y{0};
-  cout << "1st Player enters your move: ";
-  cin >> x >> y;
-  cout << endl;
-  if (board[x - 1][y - 1] == ' ')
+  static bool check = true;
+  while ((x < 1 || x > 9) || check == true)
   {
-    board[x - 1][y - 1] = 'X';
+    cout << "Your move is invalid or already chosen." << endl;
+    cout << "1st Player enters your move: ";
+    cin >> x;
+    cout << endl;
+    check = (any_of(moves.begin(), moves.end(), [x](int i) { return i == x; }));
   }
-  else
-  {
-    player1st_move();
-  }
+  moves.push_back(x);
+  int row{(x - 1) / 3};
+  int col{(x - 1) % 3};
+  board[row][col] = 'X';
   draw_board();
 }
 
-void player2nd_move()
+void player2nd_move(vector<int> &moves)
 {
   int x{0};
-  int y{0};
-  cout << "2nd Player enters your move: ";
-  cin >> x >> y;
-  cout << endl;
-  if (board[x - 1][y - 1] == ' ')
+  static bool check = true;
+  while ((x < 1 || x > 9) || check == true)
   {
-    board[x - 1][y - 1] = 'O';
+    cout << "Your move is invalid or already chosen." << endl;
+    cout << "2nd Player enters your move: ";
+    cin >> x;
+    cout << endl;
+    check = (any_of(moves.begin(), moves.end(), [x](int i) { return i == x; }));
   }
-  else
-  {
-    player2nd_move();
-  }
+  moves.push_back(x);
+  int row{(x - 1) / 3};
+  int col{(x - 1) % 3};
+  board[row][col] = 'O';
   draw_board();
 }
 
